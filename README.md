@@ -35,7 +35,7 @@ A desktop mind mapping application built with Electron, based on the KityMinder 
 
 ## 🚀 Extended Project (进阶版本项目)
 
-此外，还有一个基于 [kityminder-core](https://github.com/fex-team/kityminder-core) 开发的、拥有**完全自主编写 UI** 的导图项目。
+此外，还有一个基于 [kityminder-core](https://github.com/fex-team/kityminder-core) 开发的、拥有**新写的UI** 的导图项目。
 
 <img src="https://github.com/user-attachments/assets/e7331575-293a-4d75-879f-56abe82fcc7f" width="100%" />
 
