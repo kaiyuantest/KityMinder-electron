@@ -30,14 +30,14 @@ A desktop mind mapping application built with Electron, based on the KityMinder 
 
 
 ## 🚀 Extended Project (进阶版本项目)
-
-此外，还有一个基于 [kityminder-core](https://github.com/fex-team/kityminder-core) 开发的、拥有**新写的UI** 的导图项目。
-
-<img src="https://github.com/user-attachments/assets/e7331575-293a-4d75-879f-56abe82fcc7f" width="50%" />
-<img width="1298" height="3199" alt="image" src="https://github.com/user-attachments/assets/5150a450-1450-4eae-95b4-3cb7eff1f388" />
-
 * **功能更加完整**：包含了非常丰富的定制化功能 支持组合搜索 选中节点 按不同数字展开该节点的层级子节点。
 * **详细文档介绍**：[点击查看金山文档](https://www.kdocs.cn/l/ck6VWWoLfOxm)
+
+基于 [kityminder-core](https://github.com/fex-team/kityminder-core) 开发的、拥有**新写的UI** 的导图项目。
+
+<img src="https://github.com/user-attachments/assets/e7331575-293a-4d75-879f-56abe82fcc7f" width="50%" />
+<img width="50%" alt="image" src="https://github.com/user-attachments/assets/5150a450-1450-4eae-95b4-3cb7eff1f388" />
+
 
 ### 需要进交流群 最新版离线导图  在线的导图 请联系我
 
