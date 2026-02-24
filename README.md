@@ -37,12 +37,14 @@ A desktop mind mapping application built with Electron, based on the KityMinder 
 
 此外，还有一个基于 [kityminder-core](https://github.com/fex-team/kityminder-core) 开发的、拥有**完全自主编写 UI** 的导图项目。
 
+<img src="https://github.com/user-attachments/assets/e7331575-293a-4d75-879f-56abe82fcc7f" width="100%" />
+
 * **功能更加完整**：包含了非常丰富的定制化功能。
 * **详细文档介绍**：[点击查看金山文档](https://www.kdocs.cn/l/ck6VWWoLfOxm)
 
 ### 进阶版 UI 展示
-<img src="[https://github.com/user-attachments/assets/dde79fec-90d0-4937-ae35-62153b7b8998](https://github.com/user-attachments/assets/dde79fec-90d0-4937-ae35-62153b7b8998)" width="100%" />
-<img src="[https://github.com/user-attachments/assets/3a59cd66-25b2-4a47-b7d9-3233cfbb5aea](https://github.com/user-attachments/assets/3a59cd66-25b2-4a47-b7d9-3233cfbb5aea)" width="100%" />
+<img src="https://github.com/user-attachments/assets/dde79fec-90d0-4937-ae35-62153b7b8998" width="100%" />
+<img src="https://github.com/user-attachments/assets/3a59cd66-25b2-4a47-b7d9-3233cfbb5aea" width="100%" />
 
 ---
 
