@@ -42,7 +42,7 @@ A desktop mind mapping application built with Electron, based on the KityMinder 
 * **功能更加完整**：包含了非常丰富的定制化功能。
 * **详细文档介绍**：[点击查看金山文档](https://www.kdocs.cn/l/ck6VWWoLfOxm)
 
-### 需要购买后进行使用 请联系我
+### 需要进交流群 最新版离线导图  在线的导图 请联系我
 
 <img src="https://github.com/user-attachments/assets/3a59cd66-25b2-4a47-b7d9-3233cfbb5aea" width="30%" />
 
