@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>与书笔记思维导图工具导出版</title>
+
+	<link href="favicon.ico" type="image/x-icon" rel="shortcut icon">
+
+	<!-- bower:css -->
+	<link rel="stylesheet" href="/css/bootstrap.css" />
+	<link rel="stylesheet" href="/css/codemirror.css" />
+	<link rel="stylesheet" href="/css/hotbox.css" />
+	<link rel="stylesheet" href="/css/kityminder.core.css" />
+	<link rel="stylesheet" href="/css/color-picker.min.css" />
+	<!-- endbower -->
+
+	<link rel="stylesheet" href="/css/kityminder.editor.min.css">
+	
+
+	<script type="text/javascript">
+
+
+	</script>
+
+
+<style>
+@media print {
+  body {
+    display: none;
+  }
+}
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			/*height: 100%;*/
+			/*overflow: hidden;*/
+		}
+		h1.editor-title {
+			background: #393F4F;
+			color: white;
+			margin: 0;
+			height: 40px;
+			font-size: 14px;
+			line-height: 40px;
+			font-family: 'Hiragino Sans GB', 'Arial', 'Microsoft Yahei';
+			font-weight: normal;
+			padding: 0 20px;
+		}
+		div.minder-editor-container {
+			position: absolute;
+			top: 40px;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+		/*svg text tspan.highlight {*/
+		/*	fill: red;*/
+
+		/*}*/
+		#overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: transparent;
+			z-index: 10;
+			display: none;
+		}
+
+		#canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 20;
+
+		}
+
+		#closeBtn {
+			position: fixed;
+			top: 10px;
+			right: 10px;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+
+		#eraseBtn {
+			position: fixed;
+			top: 50px;
+			right: 10px;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+
+		#pencil {
+			position: fixed;
+			top: 90px;
+			right: 10px;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+
+		#pause {
+			position: fixed;
+			top: 200px;
+			right: 10px;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+
+		#xiufu{
+			position: fixed;
+			top: 290px;
+			right: 10px;
+			opacity: 0;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+		#stopBtn{
+			position: fixed;
+			top: 160px;
+			right: 10px;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+
+
+
+
+		#saveBtn {
+			position: fixed;
+			top: 130px;
+			right: 8px;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+
+		#drawBtn {
+			position: fixed;
+			top: 50%;
+			right: 20px;
+			transform: translate(50%, -50%);
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+			z-index: 30;
+		}
+
+		.input-container {
+			position: absolute;
+			display: none;
+		}
+
+		input[type="text"], input[type="color"], button[type="tianjia"] {
+			padding: 8px;
+			font-size: 16px;
+			/*border: none;*/
+			border-radius: 4px;
+			margin-right: 8px;
+		}
+	</style>
+
+</head>
+<body ng-app="kityminderDemo" ng-controller="MainController">
+    <style>
+	 body {
+		overflow: hidden !important;/*在166行*/
+		 display: none;
+	}
+</style>
+<script>
+	// 移除CSS样式中的overflow属性
+	document.getElementsByTagName('style')[1].sheet.deleteRule(0);
+	// 添加JavaScript代码中的样式
+	var style = document.createElement('style');
+	style.type = 'text/css';
+	style.innerHTML = 'body { overflow: auto !important; }';
+	document.head.appendChild(style);
+</script>
+	<body></body>
+<body>
+	<noscript>
+<iframe src="*.htm"></iframe>
+</noscript>
+
+	<h1 class="editor-title">
+	<a href="" style="color: #fff;" target="_blank">
+		快捷键 1.展开多级alt+数字 2.多选 cmd/win+点击 3.新增主题 Tab 4.鼠标右键拖动
+
+	</a>
+
+</h1>
+
+<kityminder-editor on-init="initEditor(editor, minder)" data-theme="fresh-green"></kityminder-editor>
+<iframe name="frameFile" style="display:none;"></iframe>
+<script src="/js/jquery-2.2.4.min.js"></script>
+<script type="text/javascript">
+
+</script>
+<script src="/js/jquery-2.2.4.min.js"></script>
+<script src="/js/base64.js"></script>
+<script src="/js/jquery.cookie.min.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/angular.js"></script>
+<script src="/js/ui-bootstrap-tpls.js"></script>
+<script src="/js/codemirror.js"></script>
+<script src="/js/xml.js"></script>
+<script src="/js/javascript.js"></script>
+<script src="/js/css.js"></script>
+<script src="/js/htmlmixed.js"></script>
+<script src="/js/markdown.js"></script>
+<script src="/js/overlay.js"></script>
+<script src="/js/gfm.js"></script>
+<script src="/js/ui-codemirror.js"></script>
+<script src="/js/marked.js"></script>
+<script src="/js/kity.min.js"></script>
+<script src="/js/hotbox.js"></script>
+<script src="/js/json-diff.js"></script>
+<script src="/js/mindercore.min.js"></script>
+<script src="/js/color-picker.min.js"></script>
+<!-- endbower -->
+<script>
+// // alert(resultvip)
+//   if (typeof resultvip === 'undefined') {
+//     var resultvip = false;
+// }
+// alert(resultvip);
+// alert($.cookie("kj"))
+// alert($.cookie("swdtdata"))
+</script>
+<!-- 自定义弹窗 -->
+<div id="noteModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+    background:white; padding:20px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); text-align:center; z-index: 199;">
+    <p>请输入笔记编号（101、102、103等）：</p>
+    <input type="text" id="noteInput"  style="width:80%; padding:5px;">
+    <br><br>
+    <button onclick="confirmNote()" style="margin-right:10px;">确定</button>
+    <button onclick="closeModal()">取消</button>
+</div>
+<script>
+function getNoteParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const note = urlParams.get("note"); // 获取 ?note=xxx 的值
+    const nextNote = note && /^\d+$/.test(note) ? parseInt(note) + 1 : 101; // 如果存在且是数字，就 +1，否则默认 101
+    return nextNote;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("noteInput").value = getNoteParam();
+});
+
+function openNoteInput() {
+    document.getElementById("noteModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("noteModal").style.display = "none";
+}
+
+function confirmNote() {
+    const noteNumber = document.getElementById("noteInput").value;
+    if (/^\d+$/.test(noteNumber)) {
+        window.open(`/user.html?note=${noteNumber}`, '_blank');
+    } else {
+        alert('请输入有效的数字编号！');
+    }
+    closeModal();
+}
+</script>
+
+	<script src="/js/diyexp.js"></script>
+<script>
+// alert(resultvip)
+</script>
+<style>
+ #popupai {
+            display: none;
+            position: fixed;
+            right: 2%; /* 向左移动一点 */
+            top: 15%; /* 从顶部留出5% */
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 0; 
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-radius: 10px;
+            width: 40%; /* 将宽度减少到当前宽度的1/3 */
+            max-width: 400px; /* 最大宽度 */
+            cursor: move; /* 鼠标移动时显示为可移动 */
+        }
+        
+        .ai-iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+        }
+        
+        #closePopupai {
+            position: absolute;
+            top: 10px; /* 距离顶部 */
+            right: 10px; /* 距离右侧 */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            z-index: 1001; /* 确保按钮在最上层 */
+        }
+
+        #showLabel {
+            display: none;
+            position: fixed;
+            right: 2%;
+            bottom: 10%;
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1002; /* 确保标签在最上层 */
+        }
+    </style>
+<!--AI-->
+<div id="overlayai"></div>
+<div id="popupai">
+    <button id="closePopupai">关闭</button>
+    <!-- src 里填入自己AI的网站地址  -->
+        <iframe class="ai-iframe" src="" allowfullscreen></iframe>
+</div>
+<div id="showLabel">显示AI</div>
+
+
+<div id="overlay">
+	<canvas id="canvas"></canvas>
+	<div id="input-container" class="input-container">
+		<input type="text" id="text-input">
+		<input type="color" id="color-picker" style="padding: 0px;border: none;height: 37px;position: relative;top: 8px; background: none;">
+		<input type="number" id="size-input" style="padding: 8px;border-radius: 4px;margin-right: 8px;font-size: 16px; width: 72px; " placeholder="字号">
+		<button type="tianjia" style="background: none;" id="confirm-input">确定</button>
+	</div>
+<button id="closeBtn">&times;</button>
+	<button id="eraseBtn">🀆</button>
+	<button id="pencil">&#x270E;</button>
+	<!--<button id="saveBtn">&#x2601;&#xfe0e;</button>-->
+	<button  style="color: #656363;" id="pause">II</button>
+	<button   id="stopBtn">&#x25A0;</button>
+    <button   id="xiufu">※</button>
+    <style type="text/css">
+
+		#mkdown{
+			position: fixed;
+			top: 490px;
+			right: 10px;
+			opacity: 0;
+			font-size: 24px;
+			border: none;
+			background-color: transparent;
+			cursor: pointer;
+		}
+	</style>
+	<button  id="mkdown">※</button>
+</div>
+<button id="drawBtn">&#x270E;</button>
+<button id="huifu">※</button>
+<style type="text/css">
+
+    #huifu{
+      position: fixed;
+      top: 360px;
+      right: 10px;
+      opacity: 0.5;
+      font-size: 24px;
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+    }
+</style>
+<script type="text/javascript">
+document.getElementById('huifu').addEventListener('click', function() {
+    // alert('0');
+    var ps = document.querySelectorAll('light');
+    ps.forEach(function (el) {
+        var value = el.innerHTML;
+        var color = getComputedStyle(el).getPropertyValue("--bgcolor");
+        var tspanEl = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspanEl.setAttribute("style", "fill: " + color);
+        tspanEl.textContent = value;
+        el.parentNode.insertBefore(tspanEl, el);
+        el.remove();
+    });
+});
+
+</script>
+
+</body>
+
+
+<script type="text/javascript">
+
+ function getUrlParam(key) {
+
+      const search = window.location.search.substring(1);
+          try {
+            return new URLSearchParams(search).get(key|| '');
+        } catch (err) {
+            const reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+            const par = search.match(reg);
+            if (par != null) return decodeURI(par[2]); return null;
+        }
+
+    };
+
+</script>
+
+
+
+
+
+
+<script>
+
+function getAllCookies() {
+  var cookies = document.cookie.split('; ');
+  var cookieObj = {};
+  for (var i = 0; i < cookies.length; i++) {
+    var parts = cookies[i].split('=');
+    var name = parts[0];
+    var value = parts[1];
+    cookieObj[name] = value;
+  }
+  return cookieObj;
+}
+
+
+
+	        document.writeln("<script type=\"text/javascript\" src=\"/js/vipexp.js\"><\/script>");
+
+
+</script>
+
+
+
+
+
+<script>
+	angular.module('kityminderDemo', ['kityminderEditor'])
+	.controller('MainController', function($scope) {
+		$scope.initEditor = function(editor, minder) {
+			window.editor = editor;
+			window.minder = minder;
+		};
+	});
+</script>
+<script>
+	$(function() {
+		// 创建一个canvas元素，并获取2d上下文
+		const canvas = $('<canvas></canvas>')[0];
+		const ctx = canvas.getContext('2d');
+
+// 定义绘画相关的变量和参数
+		let isDrawing = false;
+		let lastX = 0;
+		let lastY = 0;
+		let eraseMode = false; // 是否是橡皮擦模式
+		let penColor = 'red'; // 画笔颜色，默认为红色
+		let penClickCount = 0; // 点击画笔按钮的次数
+		ctx.lineJoin = 'round';
+		ctx.lineCap = 'round';
+		ctx.font = "24px Arial";
+		ctx.fillStyle = "#000000";
+
+		// 存储所有的文本对象
+		var texts = [];
+		$('#drawBtn').on('click', function() {
+			eraseMode = false; // 关闭擦除模式
+			$('#eraseBtn').removeClass('active'); // 移除橡皮擦按钮的激活状态
+			const pixelRatio = window.devicePixelRatio || 1;
+			const canvasWidth = $(window).width();
+			const canvasHeight = $(document).height();
+			canvas.width = canvasWidth * pixelRatio;
+			canvas.height = canvasHeight * pixelRatio;
+			canvas.style.width = canvasWidth + "px";
+			canvas.style.height = canvasHeight + "px";
+
+
+
+			urls = window.location.href; // 获取当前网页的链接
+			namevars=location.search.split("=")[1]; // 获取查询参数的值
+			if(typeof namevars == 'undefined'){ // 如果查询参数不存在
+				str = urls.split("/").pop(); // 获取当前网页的文件名
+				namevars=str.substring(0, str.indexOf('.')); // 截取文件名中除去扩展名的部分，作为默认的查询参数值
+			}
+			const drawingData = localStorage.getItem('数据是'+namevars);
+			if (drawingData) {
+				const img = new Image();
+				img.onload = function() {
+					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+					ctx.scale(pixelRatio, pixelRatio);
+
+				}
+				img.src = drawingData;
+			}else {
+				ctx.scale(pixelRatio, pixelRatio);
+			}
+
+			$('#overlay').show(); // 显示遮罩层
+			$('#drawBtn').hide(); // 隐藏画笔按钮
+		});
+
+
+
+		$(canvas).on("dblclick", function(event) {
+// 获取鼠标位置
+			var rect = canvas.getBoundingClientRect();
+			var mouseX = event.clientX - rect.left;
+			var mouseY = event.clientY - rect.top;
+// 设置文本输入框和颜色选择器的位置并显示
+			$("#input-container").css({ top: mouseY + "px", left: mouseX + "px", display: "block" });
+			$("#text-input").focus();
+
+// // 处理文本输入框的回车键按下事件
+			$("#text-input").off().on("keyup", function(event) {
+				if (event.keyCode === 13) {
+					confirmInput();
+				}
+			});
+
+// // 处理确认按钮的点击事件
+			$("#confirm-input").off().on("click", function() {
+				confirmInput();
+			});
+//
+// // 确认输入
+			function confirmInput() {
+				var text = $("#text-input").val();
+				var color = $("#color-picker").val();
+				var size = $("#size-input").val();
+
+				// 设置文本颜色、字体大小，并在画布上绘制文本
+				ctx.fillStyle = color;
+				ctx.font = size + "px Arial";
+				ctx.fillText(text, mouseX, mouseY);
+
+				// 将文本对象添加到数组中，并隐藏文本输入框和颜色选择器
+				var textObj = { text: text, x: mouseX, y: mouseY, color: color, size: size };
+				texts.push(textObj);
+				$("#text-input").val("").blur();
+				$("#size-input").val("");
+				$("#input-container").css("display", "none");
+			}
+		});
+		let toggleDrawing = true;
+		$('#stopBtn').on('click', function() {
+			toggleDrawing = !toggleDrawing;
+			if(toggleDrawing==true){
+				alert('开启画笔')
+			}else{
+				alert('关闭画笔')
+			}
+			// alert('暂停画画')
+		});
+// 将画布添加到覆盖层上
+		$('#overlay').append(canvas);
+		function draw(e) {
+			// 如果没有在画图，直接返回
+			if (!toggleDrawing) return;
+
+			if (!isDrawing) return;
+			// 判断当前是橡皮擦还是画笔
+			if (eraseMode) {
+				ctx.globalCompositeOperation = 'destination-out'; // 设置混合模式为擦除
+				ctx.lineWidth = 40; // 设置线宽为40
+			} else {
+				ctx.globalCompositeOperation = 'source-over'; // 设置混合模式为覆盖
+				ctx.strokeStyle = penColor; // 设置画笔颜色
+				ctx.lineWidth = 1; // 设置线宽为1
+			}
+			let pageX = e.pageX;
+			let pageY = e.pageY;
+			// 如果是触摸事件，则获取第一个触摸点的坐标
+			if (e.type === 'touchmove') {
+				pageX = e.touches[0].pageX;
+				pageY = e.touches[0].pageY;
+			}
+			ctx.beginPath(); // 开始绘制路径
+			ctx.moveTo(lastX, lastY); // 移动到上一次画笔位置
+			ctx.lineTo(pageX, pageY); // 从上一次画笔位置绘制到当前位置
+			ctx.stroke(); // 绘制路径
+			[lastX, lastY] = [pageX, pageY]; // 更新上一次画笔位置
+		}
+
+		// 将默认模式设置为画笔模式
+		$('#pencil').addClass('active');
+
+		// // 橡皮擦按钮点击事件
+		$('#eraseBtn').on('click', function() {
+			if (eraseMode == true) {
+				eraseMode = false;
+				$('#eraseBtn').removeClass('active');
+				$(this).addClass('active');
+				penColor = 'red';
+				alert('红笔');
+			} else {
+				eraseMode = true;
+				$('#pencil').removeClass('active');
+				$(this).addClass('active');
+				alert('橡皮擦');
+			}
+		});
+
+		// // 画笔按钮点击事件
+		$('#pencil').on('click', function() {
+			eraseMode = false;
+			$('#eraseBtn').removeClass('active');
+			$(this).addClass('active');
+			penClickCount++;
+			switch (penClickCount % 3) {
+				case 0:
+					penColor = 'red';
+					alert('红色');
+					break;
+				case 1:
+					penColor = 'blue';
+					alert('蓝色');
+					break;
+				case 2:
+					penColor = 'green';
+					alert('绿色');
+					break;
+			}
+		});
+
+		// 绑定绘图事件
+		$(document).on('mousemove touchmove', draw);
+		$(document).on('mousedown touchstart', function(e) {
+			isDrawing = true;
+			let pageX = e.pageX;
+			let pageY = e.pageY;
+			// 如果是触摸事件，则获取第一个触摸点的坐标
+			if (e.type === 'touchstart') {
+				pageX = e.touches[0].pageX;
+				pageY = e.touches[0].pageY;
+			}
+			[lastX, lastY] = [pageX, pageY]; // 记录当前画笔位置
+		});
+
+// 鼠标抬起或手指离开屏幕时停止画图
+		$(document).on('mouseup touchend', function() {
+			isDrawing = false;
+		});
+
+// // 关闭按钮点击事件监听器，隐藏画板覆盖层并显示绘图按钮
+		$('#closeBtn').on('click', function() {
+			$('#overlay').hide();
+			$('#drawBtn').show();
+		});
+
+// 保存按钮点击事件监听器，将绘制结果保存到localStorage中
+		$('#saveBtn').on('click', function() {
+			const dataURL = canvas.toDataURL();
+			let url = window.location.href;
+			var namevar=location.search.split("=")[1];
+			if(typeof namevar == 'undefined'){
+				str = urls.split("/").pop();
+				namevar=str.substring(0, str.indexOf('.'))
+			}
+			// alert(namevar)
+			try {
+				localStorage.setItem('数据是'+namevar, dataURL);
+				alert('已保存')
+			} catch(e) {
+				alert('存储空间快用完了')
+			}
+		});
+
+// 暂停按钮点击事件监听器，暂停或恢复页面滑动
+	var pauseBtn = $("#pause");
+var isPaused = false;
+pauseBtn.on("click", function() {
+  if (!isPaused) {
+    document.documentElement.style.overflow = 'hidden';
+    document.body.scroll = "no";
+    isPaused = true;
+    alert('已经停止滑动');
+    $('#stopBtn').click()
+  } else {
+    document.documentElement.style.overflow = 'visible';
+    document.body.scroll = "yes";
+    isPaused = false;
+    alert('可以滑动');
+    $('#stopBtn').click()
+
+  }
+});
+
+$('#xiufu').on('click', function() {
+			alert(0)
+			var ps=$("light");
+			ps.map(function (index) {
+				var value = ps[index].innerHTML;
+				var color = $(ps[index]).css("--bgcolor");
+				var tspanEl = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+				tspanEl.setAttribute("style", "fill: " + color);
+				tspanEl.textContent = value;
+				ps[index].parentNode.insertBefore(tspanEl, ps[index]);
+				ps[index].remove();
+			});
+
+		});
+
+	});
+
+</script>
+<style>
+        #confirm-box {
+            display: none;
+            position: fixed;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 9999;
+        }
+
+        #confirm-box h2 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        #confirm-box p {
+            font-size: 40px;
+        }
+
+        #confirm-box button {
+           margin-top: 20px;
+           padding: 13px 71px;
+           font-size: 36px;
+        }
+
+        #confirm-box .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 34px;
+            cursor: pointer;
+        }
+    </style>
+       <div id="confirm-box">
+        <span class="close">&#10006;</span>
+        <p>提醒:已适配PC端</p>
+        <p>但部分浏览不兼容会导致手机端触控不友好</p>
+        <p>等待思维导图加载完全之后</p>
+        <p>请先点展开全部选项再点勾画导图选项</p>
+        <!--<p>如果出现乱码 请更换浏览器</p>-->
+        <button id="confirm-yes" style="margin-right: 44px;">展开全部</button>
+        <button id="confirm-no" style="margin-left: 44px;">勾画导图</button>
+    </div>
+<script>
+       window.addEventListener('load', function() {
+            var confirmBox = document.getElementById('confirm-box');
+            var closeBtn = confirmBox.querySelector('.close');
+            var yesBtn = document.getElementById('confirm-yes');
+            var noBtn = document.getElementById('confirm-no');
+
+            var isMobile = /Mobi/.test(navigator.userAgent);
+
+            if (isMobile) {
+                confirmBox.style.display = 'block';
+            }
+
+            closeBtn.addEventListener('click', function() {
+                confirmBox.style.display = 'none';
+            });
+
+            yesBtn.addEventListener('click', function() {
+                // confirmBox.style.display = 'none';
+                // TODO: Add your code for "Yes" button action here
+                 minder.execCommand('ExpandToLevel', 9999);
+
+            });
+
+            noBtn.addEventListener('click', function() {
+                confirmBox.style.display = 'none';
+                 var svgLink = document.querySelector('a[data-type="svg"]');
+                if (svgLink) {
+                    svgLink.click();
+                }
+
+            });
+
+        });
+    </script>
+
+
+</html>

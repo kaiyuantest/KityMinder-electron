@@ -1,0 +1,393 @@
+<!-- 这段代码有BUG
+1. 点击需要修改的文本 如果点击的文本具有多行 修改完毕后 
+程序会直接把最后一行的文本修改成刚刚修改的文本 而不是修改到点击的时候的文本位置
+而且它会根据所修改文本的行数来生成li元素的的数量 比如修改的是文本是两行就生成2个li元素 -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>收藏列表</title>
+<style>
+  
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .export-import-container {
+display: flex;
+justify-content: flex-end;
+}
+
+.export-btn, .import-btn {
+margin-left: 10px;
+
+}
+
+li {
+  list-style: none;
+  /*position: relative;*/
+}
+
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  ul {
+  /*list-style: none; /* 移除默认的列表样式 */*/
+  /*padding: 0;*/
+  /*margin: 0;*/
+      position: relative;
+    margin-left: -38px;
+}
+
+li {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0px 0px 5px #ccc;
+  cursor: pointer;
+}
+
+  
+</style>
+</head>
+<body>
+<div class="container"> 
+ <div style="position: absolute;left: 13px; " class="search-container">
+  <input type="text" style="height: 21px; width:180px" placeholder="搜索...">
+</div>
+<div class="export-import-container">
+  <!-- <button id="add-btn">新增</button> -->
+  <button class="export-btn">导出</button>
+  <button class="import-btn">导入</button>  
+</div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script> -->
+<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+  <script>
+
+ 
+    $(document).ready(function() {
+ // 获取之前保存的数据
+  var savedData = localStorage.getItem($.cookie('kj'));
+  // 如果有数据，就将其按行排列，并显示在页面上
+  if (savedData) {
+     var lines = savedData.split('\n');
+     console.log(lines)
+    var list = $('<ul>');
+    var currentLine = '';
+    lines.forEach(function(line) {
+      var item = $('<li>').html(line.replace(/"/g, '').replace(/\n/g, '<br>').replace(/\\n/g, '<br>').replace(/\\t/g, ''));
+      list.append(item);
+      // 绑定每个选项的点击事件
+      item.on('click', function() {
+        var text = $(this).html().replace(/<br>/g, '\n');
+        // var text = $(this).html();
+        // console.log(text)
+        var optionWrapper = $('<div>').css({
+          'position': 'fixed',
+          'top': '50%',
+          'left': '50%',
+          'transform': 'translate(-50%, -50%)',
+          'padding': '10px',
+          'background-color': '#fff',
+          'border': '1px solid #ccc',
+          'border-radius': '3px',
+          'z-index': '999',
+          'box-shadow': '0px 0px 5px #ccc'
+        });
+        // var input = $('<textarea>').val(text);
+        var input = $('<textarea>').val(text).css({
+        // 'position': 'fixed',
+        'width': '350px',
+        'height': '200px'
+        });
+
+        var br = $('<br>');
+
+        var updateBtn = $('<button>').text('修改').css({
+          'margin-right': '10px',
+          'cursor': 'pointer'
+        });
+        var deleteBtn = $('<button>').text('删除').css({
+          'margin-right': '10px',
+          'cursor': 'pointer'
+        });
+
+        var exitBtn = $('<button>').text('x').css({
+          'position': 'absolute',
+          'top': '5px',
+          'right': '5px',
+          'background-color': 'transparent',
+          'border': 'none',
+          'font-size': '16px',
+          'cursor': 'pointer'
+        });
+        optionWrapper.append(input).append(br).append(updateBtn).append(deleteBtn).append(exitBtn);
+        $('body').append(optionWrapper);
+
+
+
+        
+         updateBtn.on('click', function() {
+          
+          var newText = input.val();
+          var newText = newText.replace(/\n/g, "<br>");
+          // console.log(newText) 
+          
+          var lineCount = newText.split('\n').length; // 计算文本的行数
+          // console.log(lineCount) //打印 1
+
+         
+           text = text.replace(/\n/g, "");
+
+           linesx = lines.map(function(line) {
+           return line.replace(/[\\n\\t]/g, "").replace(/<br>/g, "");
+          });
+
+
+          // console.log(text) 
+          // console.log(linesx)
+          
+          startIndex = linesx.findIndex(line => line.replace("\\n", "\n").indexOf(text) !== -1);
+
+          // var startIndex = lines.indexOf(text);  // 获取当前修改文本的起始行
+          // console.log(startIndex) //打印 等于-1  
+
+          var endIndex = startIndex + lineCount - 1; // 计算修改文本的结束行
+          
+          // console.log(endIndex) //打印等于 -1
+          
+          // console.log(endIndex - startIndex + 1) //打印等于1
+
+          lines.splice(startIndex, endIndex - startIndex + 1, newText); // 相当于运行 lines.splice(-1,1,newText)
+          // console.log(lines) 
+          
+          localStorage.setItem($.cookie('kj'), lines.join('\n')); // 将修改后的数据保存到本地存储中
+          // 更新列表中对应的元素
+          item.html(newText.replace(/\n/g, '<br>'));
+          // 如果修改的文本行数大于1，则需要将元素合并
+          if (lineCount > 1) {
+            var mergeItem = item;
+            for (var i = 1; i < lineCount; i++) {
+              mergeItem = mergeItem.next();
+              item.after(mergeItem); // 将下一个元素移动到当前元素的后面
+              lines.splice(startIndex + i, 1); // 从数据中删除当前行
+            }
+          }
+          optionWrapper.remove(); // 隐藏修改对话框
+        });
+
+
+        deleteBtn.on('click', function() {
+          // console.log(text)
+          var formattedText = text.replace(/\n/g, "");
+          console.log(formattedText)
+          var index = lines.findIndex(line => line.replace(/[\\n\\t]/g, "").replace(/<br>/g, "") === formattedText); // 查找数据中与修改文本相同的行
+
+            console.log(index)
+          if (index !== -1) { // 如果找到了匹配的行
+            lines.splice(index, 1); // 从数据中删除该行
+            localStorage.setItem($.cookie('kj'), lines.join('\n')); // 重新保存数据到本地存储中
+            item.remove(); // 从列表中移除对应的元素
+          }
+
+          optionWrapper.remove(); // 隐藏修改对话框
+        });
+        // 绑定退出按钮的点击事件
+        exitBtn.on('click', function() {
+          optionWrapper.remove();
+        });
+      });
+    });
+    var html = list.html().replace(/(<br>\s*){2,}/g, '<br>');
+    $('body').append(list);
+
+
+ // 绑定搜索框的输入事件
+    $('.search-container input').on('input', function() {
+    var searchText = $(this).val().trim().toLowerCase();
+    var k = [];
+    var keywords = searchText.split('+');
+    var excludeKeywords = [];
+    for (var i = 0; i < keywords.length; i++) {
+        if (keywords[i].includes('-')) {
+            var keywordArr = keywords[i].split('-');
+            keywords[i] = keywordArr[0];
+            var excludeArr = keywordArr.slice(1);
+            excludeKeywords = excludeKeywords.concat(excludeArr);
+        }
+    }
+    list.find('li').each(function() {
+        var itemText = $(this).text().trim().toLowerCase();
+        var matchCount = 0;
+        for (var i = 0; i < keywords.length; i++) {
+            var keyword = keywords[i];
+            if (-1 != itemText.indexOf(keyword)) {
+                matchCount++;
+            }
+        }
+        var excludeFlag = false;
+        for (var i = 0; i < excludeKeywords.length; i++) {
+            var excludeKeyword = excludeKeywords[i];
+            if (-1 != itemText.indexOf(excludeKeyword)) {
+                excludeFlag = true;
+                break;
+            }
+        }
+        if (matchCount == keywords.length && !excludeFlag) {
+            k.push($(this));
+        }
+    });
+    list.find('li').hide();
+    $.each(k, function(index, value) {
+        value.show();
+    });
+});
+
+    // 绑定增加按钮的点击事件
+    var addBtn = $('<button>').text('新增').css({
+      'margin-left': '10px',
+    });
+    if ($('.add-btn').length === 0) {
+      $('.export-btn').before(addBtn.addClass('add-btn'));
+    }
+    
+addBtn.on('click', function() {
+  // 弹出textarea量框
+  var textarea = $('<textarea>').appendTo('body');
+  textarea.css({
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    width: '350px',
+    height: '200px',
+    transform: 'translate(-50%, -50%)',
+  });
+
+  // 添加确定和取消按钮
+  var optionWrapper = $('<div>').addClass('option-wrapper').appendTo('body');
+  optionWrapper.css({
+    position: 'fixed',
+    left: '50%',
+    top: 'calc(50% + 118px)',
+    transform: 'translate(-50%, -50%)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  });
+  var confirmBtn = $('<button>').text('确定').appendTo(optionWrapper);
+  var cancelBtn = $('<button>').text('取消').appendTo(optionWrapper);
+
+  // 点击确定新增
+  confirmBtn.on('click', function() {
+    var newText = textarea.val().trim().replace(/\n/g, "<br>");
+    if (newText !== '') {
+      lines.push(newText);
+      localStorage.setItem($.cookie('kj'), lines.join('\n'));
+      var newItem = $('<li>').html(newText);
+      newItem.on('click', function() {
+        // 处理点击事件
+      });
+      list.append(newItem);
+      optionWrapper.remove();
+    }
+    textarea.remove();
+  });
+
+  // 点击取消
+  cancelBtn.on('click', function() {
+    textarea.remove();
+    optionWrapper.remove();
+  });
+});
+
+
+
+  cancelBtn.on('click', function() {
+    optionWrapper.remove();
+  });
+
+
+
+
+  
+    $('body').append(list);
+     // 导出按钮点击事件处理函数
+
+
+
+  }
+});
+
+
+
+    
+  
+  </script>
+<script type="text/javascript">
+  // 现在导出的txt文件中有<br> 我希望导出的txt文件里面没有<br> 导出的时候把<br>转换成换行 导入的时候再把换行转换成<br>
+
+// 导出按钮点击事件处理函数
+// 导出按钮点击事件处理函数
+// 根据这个导出代码 你写一个对应的导入d
+
+$('.export-btn').on('click', function() {
+  var savedData = localStorage.getItem($.cookie('kj'));
+  var lines = savedData.split('\n');
+  var txtData = "";
+  for (var i = 0; i < lines.length; i++) {
+    if (lines[i] !== '') {
+      txtData += "#\n" + lines[i].replace(/<br>/g, "\n") + "\n\n";
+    }
+  }
+  var blob = new Blob([txtData], { type: 'text/plain' });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.download = 'data.txt';
+  link.href = url;
+  link.click();
+});
+
+
+
+
+// 导入按钮点击事件处理函数
+$('.import-btn').on('click', function() {
+var input = document.createElement('input');
+input.setAttribute('type', 'file');
+input.setAttribute('accept', '.txt');
+input.style.display = 'none';
+document.body.appendChild(input);
+
+input.onchange = function() {
+var file = input.files[0];
+var reader = new FileReader();
+reader.onload = function() {
+var importedData = reader.result.replace(/\n/g, '<br>').replace(/#/g, '\n');
+localStorage.setItem($.cookie('kj'), importedData);
+location.reload();
+}
+reader.readAsText(file);
+}
+
+input.click();
+});
+   
+
+
+
+</script>
+</body>
+</html>
